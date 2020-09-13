@@ -4,7 +4,7 @@ THEOS_DEVICE_PORT=2222
 
 INSTALL_TARGET_PROCESSES = SpringBoard
 
-include $(THEOS)/makefiles/common.mk
+include /opt/theos/makefiles/common.mk
 
 
 TWEAK_NAME = SettingsNowPlaying
