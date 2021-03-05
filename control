@@ -1,4 +1,4 @@
-Package: com.popsicletreehouse..settingsnowplaying
+Package: com.popsicletreehouse.settingsnowplaying
 Name: SettingsNowPlaying
 Depends: mobilesubstrate
 Version: 0.0.1
