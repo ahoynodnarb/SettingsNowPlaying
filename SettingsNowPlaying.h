@@ -3,4 +3,4 @@
 @interface UITableView ()
 - (void)setBackground;
 @end
-static UIImageView *backgroundImageView;
+static UIImage *nowPlayingArtwork;
