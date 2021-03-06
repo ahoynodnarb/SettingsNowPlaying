@@ -4,3 +4,4 @@
 - (void)setBackground;
 @end
 static UIImage *nowPlayingArtwork;
+static BOOL enabled = NO;

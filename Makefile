@@ -15,5 +15,6 @@ THEOS_DEVICE_IP=localhost -p 2222
 INSTALL_TARGET_PROCESSES = SpringBoard
 
 include $(THEOS)/makefiles/common.mk
+SUBPROJECTS += settingsnowplayingprefs
 include $(THEOS_MAKE_PATH)/aggregate.mk
 include $(THEOS_MAKE_PATH)/tweak.mk
