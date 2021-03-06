@@ -26,6 +26,8 @@
     });
 }
 -(void)didMoveToWindow {
+    //fixes in case already playing music
+    [self setBackground];
     [[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
     [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(setBackground) name:@"changeSettingsArtwork" object:nil];
     %orig;
