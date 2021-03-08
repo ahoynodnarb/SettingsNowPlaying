@@ -1,4 +1,5 @@
 #import <MediaRemote/MediaRemote.h>
+#import <Foundation/NSDistributedNotificationCenter.h>
 #import <UIKit/UIKit.h>
 @interface SBApplication
 - (NSString *)bundleIdentifier;
