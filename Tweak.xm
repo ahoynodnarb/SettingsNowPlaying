@@ -23,13 +23,11 @@ static void PreferencesChangedCallback(CFNotificationCenterRef center, void *obs
     MRMediaRemoteGetNowPlayingInfo(dispatch_get_main_queue(), ^(CFDictionaryRef information) {
         NSDictionary* dict = (__bridge NSDictionary *)information;
         nowPlayingArtwork = [UIImage imageWithData:[dict objectForKey:(__bridge NSString*)kMRMediaRemoteNowPlayingInfoArtworkData]];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            UIImageView *backgroundImageView = [[UIImageView alloc] init];
-            [backgroundImageView setClipsToBounds:YES];
-            [backgroundImageView setContentMode: UIViewContentModeScaleAspectFill];
-            [self setBackgroundView: backgroundImageView];
-            [backgroundImageView setImage:nowPlayingArtwork];
-        });
+        UIImageView *backgroundImageView = [[UIImageView alloc] init];
+        [backgroundImageView setClipsToBounds:YES];
+        [backgroundImageView setContentMode: UIViewContentModeScaleAspectFill];
+        [self setBackgroundView: backgroundImageView];
+        [backgroundImageView setImage:nowPlayingArtwork];
     });
 }
 
