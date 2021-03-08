@@ -12,8 +12,6 @@ static void PreferencesChangedCallback(CFNotificationCenterRef center, void *obs
 %hook SBMediaController
 - (void)setNowPlayingInfo:(id)arg1 {
     %orig;
-    //[[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"changeSettingsArtwork" object:nil];
-    NSLog(@"settingsnowplaying info: %@", [[self nowPlayingApplication] bundleIdentifier]);
     [[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"changeSettingsArtwork" object:nil];
 }
 %end
