@@ -22,7 +22,7 @@
 			<key>label</key>
 			<string>Enabled</string>
 			<key>PostNotification</key>
-			<string>com.popsicletreehouse.settingsnowplayingprefs.prefschanged</string>
+			<string>com.popsicletreehouse.settingsnowplaying.prefschanged</string>
 		</dict>
 		<dict>
 			<key>cell</key>

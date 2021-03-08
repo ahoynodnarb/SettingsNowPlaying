@@ -1,14 +1,5 @@
 #import "SettingsNowPlaying.h"
 
-static void refreshPrefs() {
-	NSDictionary *bundleDefaults = [[NSUserDefaults standardUserDefaults]persistentDomainForName:@"com.popsicletreehouse.settingsnowplayingprefs"];
-	enabled = [[bundleDefaults objectForKey:@"isEnabled"]boolValue];
-}
-
-static void PreferencesChangedCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo) {
-    refreshPrefs();
-}
-
 %hook SBMediaController
 - (void)setNowPlayingInfo:(id)arg1 {
     %orig;
@@ -17,7 +8,6 @@ static void PreferencesChangedCallback(CFNotificationCenterRef center, void *obs
 %end
 
 %hook UITableView
-
 %new
 -(void)setBackground {
     MRMediaRemoteGetNowPlayingInfo(dispatch_get_main_queue(), ^(CFDictionaryRef information) {
@@ -44,6 +34,6 @@ static void PreferencesChangedCallback(CFNotificationCenterRef center, void *obs
 %end
 
 %ctor {
-	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback) PreferencesChangedCallback, CFSTR("com.popsicletreehouse.imtrynavibe.prefschanged"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback) PreferencesChangedCallback, CFSTR("com.popsicletreehouse.settingsnowplaying.prefschanged"), NULL, CFNotificationSuspensionBehaviorDeliverImmediately);
 	refreshPrefs();
 }
