@@ -1,5 +1,18 @@
 #import "SettingsNowPlaying.h"
 
+static void refreshPrefs()
+{
+    NSDictionary *bundleDefaults = [[NSUserDefaults standardUserDefaults] persistentDomainForName:@"com.popsicletreehouse.settingsnowplayingprefs"];
+    enabled = [bundleDefaults objectForKey:@"isEnabled"] ? [[bundleDefaults objectForKey:@"isEnabled"] boolValue] : YES;
+    blur = [bundleDefaults objectForKey:@"isBlur"] ? [[bundleDefaults objectForKey:@"isBlur"]boolValue] : YES;
+    intensity = [bundleDefaults objectForKey:@"blurIntensity"] ? [[bundleDefaults objectForKey:@"blurIntensity"]floatValue] : 1.0f;
+}
+
+static void PreferencesChangedCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
+{
+    refreshPrefs();
+}
+
 %hook SBMediaController
 - (void)setNowPlayingInfo:(id)arg1 {
     %orig;
@@ -18,13 +31,22 @@
         [backgroundImageView setContentMode: UIViewContentModeScaleAspectFill];
         [self setBackgroundView: backgroundImageView];
         [backgroundImageView setImage:nowPlayingArtwork];
+        NSLog(@"blur: %d", blur);
+        if(blur) {
+            UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+            UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+            blurEffectView.frame = self.backgroundView.bounds;
+            blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+            blurEffectView.alpha = intensity;
+            [self.backgroundView addSubview:blurEffectView];
+        }
     });
 }
 
 -(void)didMoveToWindow {
     %orig;
     if(enabled) {
-        //fixes in case already playing music
+        // fixes in case already playing music
         if(!self.backgroundView)
             [self setBackground];
         [[NSDistributedNotificationCenter defaultCenter] removeObserver:self];

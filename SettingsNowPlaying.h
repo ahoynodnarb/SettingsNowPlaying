@@ -13,13 +13,5 @@
 @end
 static UIImage *nowPlayingArtwork;
 static BOOL enabled = YES;
-static void refreshPrefs()
-{
-    NSDictionary *bundleDefaults = [[NSUserDefaults standardUserDefaults] persistentDomainForName:@"com.popsicletreehouse.settingsnowplayingprefs"];
-    enabled = [[bundleDefaults objectForKey:@"isEnabled"] boolValue];
-}
-
-static void PreferencesChangedCallback(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
-{
-    refreshPrefs();
-}
+static BOOL blur = YES;
+static float intensity = 0.0f;
