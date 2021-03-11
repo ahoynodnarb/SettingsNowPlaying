@@ -26,7 +26,6 @@ static void PreferencesChangedCallback(CFNotificationCenterRef center, void *obs
     MRMediaRemoteGetNowPlayingInfo(dispatch_get_main_queue(), ^(CFDictionaryRef information) {
         NSDictionary* dict = (__bridge NSDictionary *)information;
         nowPlayingArtwork = [UIImage imageWithData:[dict objectForKey:(__bridge NSString*)kMRMediaRemoteNowPlayingInfoArtworkData]];
-        // @TODO: Fix bug where if you open settings, play song, then repoen settings album artwork isn't there
         if(nowPlayingArtwork) {
             backgroundImageView = [[UIImageView alloc] initWithImage:nowPlayingArtwork];
             [backgroundImageView setClipsToBounds:YES];
@@ -41,7 +40,7 @@ static void PreferencesChangedCallback(CFNotificationCenterRef center, void *obs
                 [self.backgroundView addSubview:blurEffectView];
             }
         } else
-            [backgroundImageView setImage:nil];
+            self.backgroundView = nil;
     });
 }
 
@@ -49,7 +48,7 @@ static void PreferencesChangedCallback(CFNotificationCenterRef center, void *obs
     %orig;
     if(enabled) {
         // fixes in case already playing music
-        if(!nowPlayingArtwork || !self.backgroundView)
+        if(!self.backgroundView)
             [self setBackground];
         [[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
         [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(setBackground) name:@"changeSettingsArtwork" object:nil];
