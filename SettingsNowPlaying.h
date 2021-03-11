@@ -10,8 +10,11 @@
 @interface SBMediaController
 + (id)sharedInstance;
 - (SBApplication *)nowPlayingApplication;
+- (BOOL)isPlaying;
 @end
-static UIImage *nowPlayingArtwork;
-static BOOL enabled = YES;
-static BOOL blur = YES;
-static float intensity = 0.0f;
+BOOL checkForNull = YES;
+BOOL enabled = YES;
+BOOL blur = YES;
+float intensity = 0.0f;
+UIImage *nowPlayingArtwork;
+UIImageView *backgroundImageView;

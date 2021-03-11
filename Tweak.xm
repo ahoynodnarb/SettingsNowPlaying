@@ -16,6 +16,7 @@ static void PreferencesChangedCallback(CFNotificationCenterRef center, void *obs
 %hook SBMediaController
 - (void)setNowPlayingInfo:(id)arg1 {
     %orig;
+    NSLog(@"settingsnowplaying info updated");
     [[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"changeSettingsArtwork" object:nil];
 }
 %end
@@ -23,32 +24,37 @@ static void PreferencesChangedCallback(CFNotificationCenterRef center, void *obs
 %hook UITableView
 %new
 -(void)setBackground {
+    NSLog(@"settingsnowplaying setBackground called");
     MRMediaRemoteGetNowPlayingInfo(dispatch_get_main_queue(), ^(CFDictionaryRef information) {
         NSDictionary* dict = (__bridge NSDictionary *)information;
         nowPlayingArtwork = [UIImage imageWithData:[dict objectForKey:(__bridge NSString*)kMRMediaRemoteNowPlayingInfoArtworkData]];
-        UIImageView *backgroundImageView = [[UIImageView alloc] init];
-        [backgroundImageView setClipsToBounds:YES];
-        [backgroundImageView setContentMode: UIViewContentModeScaleAspectFill];
-        [self setBackgroundView: backgroundImageView];
-        [backgroundImageView setImage:nowPlayingArtwork];
-        NSLog(@"blur: %d", blur);
-        if(blur) {
-            UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
-            UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-            blurEffectView.frame = self.backgroundView.bounds;
-            blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-            blurEffectView.alpha = intensity;
-            [self.backgroundView addSubview:blurEffectView];
-        }
+        if(nowPlayingArtwork) {
+            backgroundImageView = [[UIImageView alloc] initWithImage:nowPlayingArtwork];
+            [backgroundImageView setClipsToBounds:YES];
+            [backgroundImageView setContentMode: UIViewContentModeScaleAspectFill];
+            [self setBackgroundView: backgroundImageView];
+            if(blur) {
+                UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+                UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+                blurEffectView.frame = self.backgroundView.bounds;
+                blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+                blurEffectView.alpha = intensity;
+                [self.backgroundView addSubview:blurEffectView];
+            }
+        } else
+            self.backgroundView = nil;
     });
 }
 
--(void)didMoveToWindow {
+-(void)didMoveToSuperview {
+    NSLog(@"settingsnowplaying moved to superview");
     %orig;
     if(enabled) {
         // fixes in case already playing music
-        if(!self.backgroundView)
+        if(!nowPlayingArtwork || !self.backgroundView)
             [self setBackground];
+        else
+            self.backgroundView = nil;
         [[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
         [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(setBackground) name:@"changeSettingsArtwork" object:nil];
     }
