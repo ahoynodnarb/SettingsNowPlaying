@@ -16,7 +16,6 @@ static void PreferencesChangedCallback(CFNotificationCenterRef center, void *obs
 %hook SBMediaController
 - (void)setNowPlayingInfo:(id)arg1 {
     %orig;
-    NSLog(@"settingsnowplaying info updated");
     [[NSDistributedNotificationCenter defaultCenter] postNotificationName:@"changeSettingsArtwork" object:nil];
 }
 %end
@@ -24,10 +23,10 @@ static void PreferencesChangedCallback(CFNotificationCenterRef center, void *obs
 %hook UITableView
 %new
 -(void)setBackground {
-    NSLog(@"settingsnowplaying setBackground called");
     MRMediaRemoteGetNowPlayingInfo(dispatch_get_main_queue(), ^(CFDictionaryRef information) {
         NSDictionary* dict = (__bridge NSDictionary *)information;
         nowPlayingArtwork = [UIImage imageWithData:[dict objectForKey:(__bridge NSString*)kMRMediaRemoteNowPlayingInfoArtworkData]];
+        // @TODO: Fix bug where if you open settings, play song, then repoen settings album artwork isn't there
         if(nowPlayingArtwork) {
             backgroundImageView = [[UIImageView alloc] initWithImage:nowPlayingArtwork];
             [backgroundImageView setClipsToBounds:YES];
@@ -42,12 +41,11 @@ static void PreferencesChangedCallback(CFNotificationCenterRef center, void *obs
                 [self.backgroundView addSubview:blurEffectView];
             }
         } else
-            self.backgroundView = nil;
+            [backgroundImageView setImage:nil];
     });
 }
 
 -(void)didMoveToSuperview {
-    NSLog(@"settingsnowplaying moved to superview");
     %orig;
     if(enabled) {
         // fixes in case already playing music
