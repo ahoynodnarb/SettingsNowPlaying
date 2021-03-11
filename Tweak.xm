@@ -53,8 +53,6 @@ static void PreferencesChangedCallback(CFNotificationCenterRef center, void *obs
         // fixes in case already playing music
         if(!nowPlayingArtwork || !self.backgroundView)
             [self setBackground];
-        else
-            self.backgroundView = nil;
         [[NSDistributedNotificationCenter defaultCenter] removeObserver:self];
         [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(setBackground) name:@"changeSettingsArtwork" object:nil];
     }
